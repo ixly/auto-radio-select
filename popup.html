@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Auto Radio Select</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+          min-width: 300px;
+      }
+
+      button {
+          padding: 5px 10px;
+          font-size: .8rem;
+          cursor: pointer;
+      }
+
+      .form-group {
+          display: flex;
+          gap: 10px;
+      }
+
+      .settings {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-bottom: 20px;
+      }
+
+      .shortcut-key {
+          background-color: #f5f5f5;
+          border: 1px solid #ddd;
+          border-radius: 3px;
+          padding: 2px 5px;
+          font-weight: bold;
+      }
+  </style>
+</head>
+<body>
+<h2>Auto form submit</h2>
+<div class="settings">
+  <div class="form-group">
+    <label for="selectionPattern">Selection Pattern:</label>
+    <select id="selectionPattern">
+      <option value="first">First</option>
+      <option value="last">Last</option>
+      <option value="random">Random</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="selectionPattern">Auto submit:</label>
+    <input type="checkbox" id="autoSubmit" />
+  </div>
+  <div class="form-group">
+    <button id="saveSettings">Save Settings</button>
+  </div>
+</div>
+<div class="settings">
+  <div class="form-group">
+    <span>Auto-Select & Submit Key:</span>
+    <span id="autoRadioSubmitKey" class="shortcut-key"></span>
+  </div>
+  <div class="form-group">
+    <span>Toggle Auto-Submit Key:</span>
+    <span id="toggleAutoSubmitKey" class="shortcut-key"></span>
+  </div>
+  <div class="form-group">
+    <a href="#" id="shortcutsLink">Change keyboard shortcuts</a>
+  </div>
+</div>
+<script src="popup.js"></script>
+</body>
+</html>
