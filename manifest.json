@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Auto Radio Select",
-  "version": "1.6",
+  "version": "0.1",
   "description": "Automatically selects radio buttons and submits the form.",
   "permissions": ["scripting", "activeTab", "storage", "notifications", "tabs", "webNavigation"],
   "background": {
@@ -41,7 +41,15 @@
   ],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "http://localhost:*/*",
+        "https://*.ixlyassessment.nl/*",
+        "https://*.ixlyacceptance.nl/*",
+        "https://*.ixlystaging.nl/*",
+        "https://*.herokuapp.com/*",
+        "https://l.test-toolkit.nl/*",
+        "https://test-toolkit.nl/*"
+      ],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
