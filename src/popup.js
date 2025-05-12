@@ -1,25 +1,26 @@
-document.getElementById('saveSettings').addEventListener('click', () => {
+function showSavedFeedback() {
+  const saveStatus = document.getElementById('saveStatus')
+  saveStatus.textContent = 'Saved!'
+  saveStatus.classList.add('visible')
+
+  // Hide the feedback after 1.5 seconds
+  setTimeout(() => {
+    saveStatus.classList.remove('visible')
+  }, 1500)
+}
+
+function saveSettings() {
   const selectionPattern = document.getElementById('selectionPattern').value
   const autoSubmit = document.getElementById('autoSubmit').checked
   chrome.storage.sync.set({selectionPattern, autoSubmit}, () => {
-    chrome.notifications.create({
-      type: 'basic',
-      iconUrl: 'icon.png',
-      title: 'Settings Saved',
-      message: 'Your selection pattern and auto submit preferences have been saved.'
-    })
-
-    // Display visual feedback in the popup itself
-    const saveButton = document.getElementById('saveSettings')
-    const originalText = saveButton.textContent
-    saveButton.textContent = 'Saved!'
-    saveButton.disabled = true
-    setTimeout(() => {
-      saveButton.textContent = originalText
-      saveButton.disabled = false
-    }, 1500)
+    console.log('Settings saved:', { selectionPattern, autoSubmit })
+    showSavedFeedback()
   })
-})
+}
+
+// Add change event listeners to save on change
+document.getElementById('selectionPattern').addEventListener('change', saveSettings)
+document.getElementById('autoSubmit').addEventListener('change', saveSettings)
 
 document.addEventListener('DOMContentLoaded', async () => {
   const settings = await chrome.storage.sync.get(['selectionPattern', 'autoSubmit'])

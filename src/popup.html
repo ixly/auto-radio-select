@@ -35,10 +35,23 @@
           padding: 2px 5px;
           font-weight: bold;
       }
+
+      .save-status {
+          color: #4caf50;
+          font-size: 0.9rem;
+          height: 1.2rem;
+          display: inline-block;
+          transition: opacity 0.5s ease-in-out;
+          opacity: 0;
+      }
+
+      .save-status.visible {
+          opacity: 1;
+      }
   </style>
 </head>
 <body>
-<h2>Auto form submit</h2>
+<h2>Auto radio submit</h2>
 <div class="settings">
   <div class="form-group">
     <label for="selectionPattern">Selection Pattern:</label>
@@ -49,11 +62,11 @@
     </select>
   </div>
   <div class="form-group">
-    <label for="selectionPattern">Auto submit:</label>
+    <label for="autoSubmit">Auto submit:</label>
     <input type="checkbox" id="autoSubmit" />
   </div>
   <div class="form-group">
-    <button id="saveSettings">Save Settings</button>
+    <span id="saveStatus" class="save-status"></span>
   </div>
 </div>
 <div class="settings">
