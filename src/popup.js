@@ -1,6 +1,13 @@
 function saveSettings() {
   const selectionPattern = document.getElementById('selectionPattern').value
   const autoSubmit = document.getElementById('autoSubmit').checked
+
+  // Update badge when autoSubmit changes
+  chrome.action.setBadgeText({ text: autoSubmit ? 'ON' : '' });
+  if (autoSubmit) {
+    chrome.action.setBadgeBackgroundColor({ color: '#4CAF50' });
+  }
+
   chrome.storage.sync.set({selectionPattern, autoSubmit}, () => {
     console.log('Settings saved:', { selectionPattern, autoSubmit })
   })
@@ -18,6 +25,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (settings.autoSubmit !== undefined) {
     document.getElementById('autoSubmit').checked = settings.autoSubmit
+
+    // Ensure badge reflects current state
+    chrome.action.setBadgeText({ text: settings.autoSubmit ? 'ON' : '' });
+    if (settings.autoSubmit) {
+      chrome.action.setBadgeBackgroundColor({ color: '#4CAF50' });
+    }
   }
 
   // Get the actual configured shortcuts
