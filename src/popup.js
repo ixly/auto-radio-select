@@ -1,20 +1,8 @@
-function showSavedFeedback() {
-  const saveStatus = document.getElementById('saveStatus')
-  saveStatus.textContent = 'Saved!'
-  saveStatus.classList.add('visible')
-
-  // Hide the feedback after 1.5 seconds
-  setTimeout(() => {
-    saveStatus.classList.remove('visible')
-  }, 1500)
-}
-
 function saveSettings() {
   const selectionPattern = document.getElementById('selectionPattern').value
   const autoSubmit = document.getElementById('autoSubmit').checked
   chrome.storage.sync.set({selectionPattern, autoSubmit}, () => {
     console.log('Settings saved:', { selectionPattern, autoSubmit })
-    showSavedFeedback()
   })
 }
 
@@ -27,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (settings.selectionPattern) {
     document.getElementById('selectionPattern').value = settings.selectionPattern
   }
-  
+
   if (settings.autoSubmit !== undefined) {
     document.getElementById('autoSubmit').checked = settings.autoSubmit
   }
@@ -35,18 +23,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Get the actual configured shortcuts
   chrome.commands.getAll((commands) => {
     console.log('Available commands:', commands)
-    
+
     const autoRadioSubmitCommand = commands.find(cmd => cmd.name === 'auto-radio-submit')
     if (autoRadioSubmitCommand) {
       document.getElementById('autoRadioSubmitKey').innerText = autoRadioSubmitCommand.shortcut || 'Not Set'
     }
-    
+
     const toggleAutoSubmitCommand = commands.find(cmd => cmd.name === 'toggle-auto-submit')
     if (toggleAutoSubmitCommand) {
       document.getElementById('toggleAutoSubmitKey').innerText = toggleAutoSubmitCommand.shortcut || 'Not Set'
     }
   })
-  
+
   // Set up the shortcuts link
   document.getElementById('shortcutsLink').addEventListener('click', (e) => {
     e.preventDefault()
