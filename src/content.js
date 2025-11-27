@@ -2,6 +2,10 @@
   // Mark that the content script has been loaded
   window.autoRadioContentScriptLoaded = true
 
+  // Add debounce protection against duplicate submissions
+  let lastAutoSelectTime = 0;
+  const DEBOUNCE_TIME = 500; // 500ms debounce
+
   // Use a variable that can be updated by storage changes
   let settings = await chrome.storage.sync.get(['selectionPattern', 'autoSubmit'])
   let selectionPattern = settings.selectionPattern || 'first'
@@ -134,25 +138,66 @@
     console.log("Message received:", message)
 
     if (message.action === "triggerAutoSelectAndSubmit") {
+      // Check if we've recently processed this action (debounce)
+      const now = Date.now();
+      if (now - lastAutoSelectTime < DEBOUNCE_TIME) {
+        console.log(`Ignoring duplicate trigger (debounced). Time since last: ${now - lastAutoSelectTime}ms`);
+        if (sendResponse) {
+          sendResponse({ success: false, reason: "debounced" });
+        }
+        return false; // No async response
+      }
+
+      // Update the last action time
+      lastAutoSelectTime = now;
       console.log(`Received message to trigger auto select and submit via ${actualShortcut}`)
-      autoSelectAndSubmit()
+      autoSelectAndSubmit();
+
+      // Respond to prevent "message channel closed" errors
+      if (sendResponse) {
+        sendResponse({ success: true });
+      }
     } else if (message.action === "checkPageChange") {
       console.log("Received message to check page change")
+
+      // Check if we've recently processed an action (debounce)
+      const now = Date.now();
+      if (now - lastAutoSelectTime < DEBOUNCE_TIME) {
+        console.log(`Ignoring checkPageChange (debounced). Time since last: ${now - lastAutoSelectTime}ms`);
+        if (sendResponse) {
+          sendResponse({ success: false, reason: "debounced" });
+        }
+        return false;
+      }
+
       // Get the latest auto submit setting
       chrome.storage.sync.get(['autoSubmit'], (result) => {
         const currentAutoSubmitEnabled = result.autoSubmit || false
 
         if (currentAutoSubmitEnabled) {
+          // Update the last action time
+          lastAutoSelectTime = now;
+
           // Check for radio buttons after a short delay to ensure page is loaded
           setTimeout(() => {
             // First check if there are any radio buttons on the page
             autoSelectAndSubmit()
           }, 300)
         }
-      })
+
+        // Respond to prevent "message channel closed" errors
+        if (sendResponse) {
+          sendResponse({ success: true });
+        }
+      });
+
+      // Return true to indicate we'll respond asynchronously
+      return true;
     }
 
-    // Always return true to indicate async response
-    return true
+    // Return false by default since we're not using async response for other messages
+    // This helps prevent "message channel closed" errors
+    sendResponse && sendResponse({ error: "Unknown message action" });
+    return false;
   })
 })()
