@@ -40,6 +40,9 @@
       return
     }
 
+    // Track which forms have been modified
+    const formsWithRadios = new Set()
+
     Object.entries(groups).forEach(([groupName, radios]) => {
       let selected
       if (selectionPattern === 'first') {
@@ -53,13 +56,23 @@
       if (selected) {
         selected.click()
         console.log(`Group: ${groupName}, Value Selected: ${selected.value}`)
+
+        // Find the form containing this radio button
+        const form = selected.closest('form')
+        if (form) {
+          formsWithRadios.add(form)
+        }
       }
     })
 
-    const submitButton = document.querySelector('button[type="submit"]:not(.previous-button), input[type="submit"]:not(.previous-button)')
-    if (submitButton && !submitButton.disabled && submitButton.checkVisibility()) {
-      submitButton.click()
-    }
+    // Submit buttons in forms that contain radio buttons
+    formsWithRadios.forEach(form => {
+      const submitButton = form.querySelector('button[type="submit"]:not(.previous-button), input[type="submit"]:not(.previous-button)')
+      if (submitButton && !submitButton.disabled && submitButton.checkVisibility()) {
+        submitButton.click()
+        console.log(`Clicked submit button in form`)
+      }
+    })
   }
 
   // Set up listeners for Rails frameworks
